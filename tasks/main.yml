@@ -11,6 +11,14 @@
     name: elasticsearch
     update_cache: yes
   when: "'elasticsearch' not in ansible_facts.packages"
+  notify: restart elasticsearch
+
+- name: Configure elasticsearch
+  template:
+    src: "{{ elasticsearch_config_tpl }}"
+    dest: "{{ elasticsearch_config_dest }}"
+    mode: "0644"
+  notify: restart elasticsearch
 
 # Start elasticsearch
 - name: Start Elasticsearch

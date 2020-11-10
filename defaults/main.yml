@@ -1,2 +1,4 @@
 ---
 # ELK vars
+elasticsearch_config_tpl: elasticsearch.yml.j2
+elasticsearch_config_dest: /etc/elasticsearch/elasticsearch.yml
