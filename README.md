@@ -5,6 +5,10 @@
 ## Defaults
 
 ```
+# default elk version
+elastic_stack_version: 7.9.3
+elastic_stack_version_lock: true
+
 elastic_key_url: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"
 elastic_repo: "deb https://artifacts.elastic.co/packages/7.x/apt stable main"
 elasticsearch_config_tpl: elasticsearch.yml.j2

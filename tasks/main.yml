@@ -5,13 +5,22 @@
   package_facts:
     manager: auto
     
+- name: Unhold elasticsearch version for install
+  command: apt-mark unhold elasticsearch
+  changed_when: false
+
 # Install elasticsearch
 - name: Install Elasticsearch
   apt:
-    name: elasticsearch
+    name: elasticsearch{% if elastic_stack_version is defined and elastic_stack_version|length>0 %}={{ elastic_stack_version }}{% endif %}
     update_cache: yes
   when: "'elasticsearch' not in ansible_facts.packages"
   notify: restart elasticsearch
+
+- name: Hold elasticsearch version
+  command: apt-mark hold elasticsearch
+  when: elastic_stack_version_lock
+  changed_when: false
 
 - name: Configure elasticsearch
   template:
