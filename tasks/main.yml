@@ -30,9 +30,10 @@
     path: "{{ elasticsearch_xpack_ssl_cert_path }}"
     state: directory
     mode: "02750"
-  when: elasticsearch_xpack_http_ssl|bool or elasticsearch_xpack_transport_ssl|bool
+  when: (elasticsearch_xpack_http_ssl|bool and elasticsearch_xpack_http_ssl_copy_certs|bool) or
+        (elasticsearch_xpack_transport_ssl|bool and elasticsearch_xpack_transport_ssl_copy_certs|bool)
 
-- name: Configure elasticsearch HTTP ssl certificates
+- name: Copy elasticsearch HTTP ssl certificates
   copy:
     src: "{{ item }}"
     dest: "{{ elasticsearch_xpack_ssl_cert_path }}/{{ item | basename }}"
@@ -43,10 +44,10 @@
     - "{{ elasticsearch_xpack_http_ssl_ca }}"
     - "{{ elasticsearch_xpack_http_ssl_cert }}"
     - "{{ elasticsearch_xpack_http_ssl_key }}"
-  when: elasticsearch_xpack_http_ssl|bool
+  when: elasticsearch_xpack_http_ssl|bool and elasticsearch_xpack_http_ssl_copy_certs|bool
   notify: restart elasticsearch
 
-- name: Configure elasticsearch transport ssl certificates
+- name: Copy elasticsearch transport ssl certificates
   copy:
     src: "{{ item }}"
     dest: "{{ elasticsearch_xpack_ssl_cert_path }}/{{ item | basename }}"
@@ -57,7 +58,7 @@
     - "{{ elasticsearch_xpack_transport_ssl_ca }}"
     - "{{ elasticsearch_xpack_transport_ssl_cert }}"
     - "{{ elasticsearch_xpack_transport_ssl_key }}"
-  when: elasticsearch_xpack_transport_ssl|bool
+  when: elasticsearch_xpack_transport_ssl|bool and elasticsearch_xpack_transport_ssl_copy_certs|bool
   notify: restart elasticsearch
 
 - name: Configure elasticsearch

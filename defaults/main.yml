@@ -19,6 +19,7 @@ elasticsearch_xpack_users: []
 elasticsearch_xpack_roles: {}
 
 elasticsearch_xpack_ssl: "{{ elasticsearch_xpack_enabled }}"
+elasticsearch_xpack_ssl_copy_certs: true
 elasticsearch_xpack_ssl_cert_path: "{{ elasticsearch_config_dir }}/certs"
 elasticsearch_xpack_ssl_supported_protocols: ""
 elasticsearch_xpack_ssl_client_authentication: optional
@@ -28,6 +29,7 @@ elasticsearch_xpack_ssl_key: elasticsearch.key
 elasticsearch_xpack_ssl_key_passphrase: ""
 elasticsearch_xpack_ssl_secure_key_passphrase: ""
 
+elasticsearch_xpack_http_ssl_copy_certs: "{{ elasticsearch_xpack_ssl_copy_certs }}"
 elasticsearch_xpack_http_ssl: "{{ elasticsearch_xpack_ssl }}"
 elasticsearch_xpack_http_ssl_supported_protocols: "{{ elasticsearch_xpack_ssl_supported_protocols }}"
 elasticsearch_xpack_http_ssl_client_authentication: "{{ elasticsearch_xpack_ssl_client_authentication }}"
@@ -37,6 +39,7 @@ elasticsearch_xpack_http_ssl_key: "{{ elasticsearch_xpack_ssl_key }}"
 elasticsearch_xpack_http_ssl_key_passphrase: "{{ elasticsearch_xpack_ssl_key_passphrase }}"
 elasticsearch_xpack_http_ssl_secure_key_passphrase: "{{ elasticsearch_xpack_ssl_secure_key_passphrase }}"
 
+elasticsearch_xpack_transport_ssl_copy_certs: "{{ elasticsearch_xpack_ssl_copy_certs }}"
 elasticsearch_xpack_transport_ssl: "{{ elasticsearch_xpack_ssl }}"
 elasticsearch_xpack_transport_ssl_supported_protocols: "{{ elasticsearch_xpack_ssl_supported_protocols }}"
 elasticsearch_xpack_transport_ssl_client_authentication: "{{ elasticsearch_xpack_ssl_client_authentication }}"
