@@ -25,6 +25,41 @@
   when: elastic_stack_version_lock
   changed_when: false
 
+- name: Ensure certs directory exits
+  file:
+    path: "{{ elasticsearch_xpack_ssl_cert_path }}"
+    state: directory
+    mode: "02750"
+  when: elasticsearch_xpack_http_ssl|bool or elasticsearch_xpack_transport_ssl|bool
+
+- name: Configure elasticsearch HTTP ssl certificates
+  copy:
+    src: "{{ item }}"
+    dest: "{{ elasticsearch_xpack_ssl_cert_path }}/{{ item | basename }}"
+    mode: "0660"
+    owner: root
+    group: elasticsearch
+  loop:
+    - "{{ elasticsearch_xpack_http_ssl_ca }}"
+    - "{{ elasticsearch_xpack_http_ssl_cert }}"
+    - "{{ elasticsearch_xpack_http_ssl_key }}"
+  when: elasticsearch_xpack_http_ssl|bool
+  notify: restart elasticsearch
+
+- name: Configure elasticsearch transport ssl certificates
+  copy:
+    src: "{{ item }}"
+    dest: "{{ elasticsearch_xpack_ssl_cert_path }}/{{ item | basename }}"
+    mode: "0660"
+    owner: root
+    group: elasticsearch
+  loop:
+    - "{{ elasticsearch_xpack_transport_ssl_ca }}"
+    - "{{ elasticsearch_xpack_transport_ssl_cert }}"
+    - "{{ elasticsearch_xpack_transport_ssl_key }}"
+  when: elasticsearch_xpack_transport_ssl|bool
+  notify: restart elasticsearch
+
 - name: Configure elasticsearch
   become: yes
   template:
@@ -33,6 +68,17 @@
     mode: "0660"
     owner: root
     group: elasticsearch
+  notify: restart elasticsearch
+
+- name: Configure elasticsearch roles
+  become: yes
+  template:
+    src: "{{ elasticsearch_roles_tpl }}"
+    dest: "{{ elasticsearch_roles_dest }}"
+    mode: "0660"
+    owner: root
+    group: elasticsearch
+  when: elasticsearch_xpack_enabled|bool
   notify: restart elasticsearch
 
 - name: Configure elasticsearch users
@@ -46,7 +92,7 @@
   loop: 
     - "{{ elasticsearch_users_tpl }}"
     - "{{ elasticsearch_users_roles_tpl }}"
-  when: "{{ elasticsearch_xpack_enabled|bool }}"
+  when: elasticsearch_xpack_enabled|bool
 
 # Start elasticsearch
 - name: Start Elasticsearch
