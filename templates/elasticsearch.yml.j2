@@ -89,3 +89,47 @@ discovery.type: {{ elasticsearch_discovery_type }}
 # Require explicit names when deleting indices:
 #
 #action.destructive_requires_name: true
+
+# x-pack security settings
+xpack.security.enabled: {{ elasticsearch_xpack_enabled }}
+{% if elasticsearch_xpack_enabled %}
+
+## HTTP SSL settings
+xpack.security.http.ssl.enabled: {{ elasticsearch_xpack_http_ssl }}
+{% if elasticsearch_xpack_http_ssl %}
+{% if elasticsearch_xpack_http_ssl_supported_protocols is defined and elasticsearch_xpack_http_ssl_supported_protocols|length>0 %}
+xpack.security.http.ssl.supported_protocols: {{ elasticsearch_xpack_http_ssl_supported_protocols }}
+{% endif %}
+xpack.security.http.ssl.client_authentication: {{ elasticsearch_xpack_http_ssl_client_authentication  }}
+xpack.security.http.ssl.key: {{ elasticsearch_xpack_ssl_cert_path  }}/{{ elasticsearch_xpack_http_ssl_key  }}
+xpack.security.http.ssl.certificate: {{ elasticsearch_xpack_ssl_cert_path  }}/{{ elasticsearch_xpack_http_ssl_cert  }}
+xpack.security.http.ssl.certificate_authorities: {{ elasticsearch_xpack_ssl_cert_path  }}/{{ elasticsearch_xpack_http_ssl_ca  }}
+{% if elasticsearch_xpack_http_ssl_key_passphrase is defined and elasticsearch_xpack_http_ssl_key_passphrase|length>0 %}
+xpack.security.http.ssl.key_passphrase: {{ elasticsearch_xpack_http_ssl_key_passphrase }}
+{% endif %}
+{% if elasticsearch_xpack_http_ssl_secure_key_passphrase is defined and elasticsearch_xpack_http_ssl_secure_key_passphrase|length>0 %}
+xpack.security.http.ssl.secure_key_passphrase: {{ elasticsearch_xpack_http_ssl_secure_key_passphrase }}
+{% endif %}
+{% endif %}
+
+## Transport SSL settings
+xpack.security.transport.ssl.enabled: {{ elasticsearch_xpack_transport_ssl }}
+{% if elasticsearch_xpack_transport_ssl %}
+{% if elasticsearch_xpack_transport_ssl_supported_protocols is defined and elasticsearch_xpack_transport_ssl_supported_protocols|length>0 %}
+xpack.security.transport.ssl.supported_protocols: {{ elasticsearch_xpack_transport_ssl_supported_protocols }}
+{% endif %}
+xpack.security.transport.ssl.verification_mode: {{ elasticsearch_xpack_transport_ssl_verification_mode }}
+xpack.security.transport.ssl.client_authentication: {{ elasticsearch_xpack_transport_ssl_client_authentication  }}
+xpack.security.transport.ssl.key: {{ elasticsearch_xpack_ssl_cert_path  }}/{{ elasticsearch_xpack_transport_ssl_key  }}
+xpack.security.transport.ssl.certificate: {{ elasticsearch_xpack_ssl_cert_path  }}/{{ elasticsearch_xpack_transport_ssl_cert  }}
+xpack.security.transport.ssl.certificate_authorities: {{ elasticsearch_xpack_ssl_cert_path  }}/{{ elasticsearch_xpack_transport_ssl_ca  }}
+{% if elasticsearch_xpack_transport_ssl_key_passphrase is defined and elasticsearch_xpack_transport_ssl_key_passphrase|length>0 %}
+xpack.security.transport.ssl.key_passphrase: {{ elasticsearch_xpack_transport_ssl_key_passphrase }}
+{% endif %}
+{% if elasticsearch_xpack_transport_ssl_secure_key_passphrase is defined and elasticsearch_xpack_transport_ssl_secure_key_passphrase|length>0 %}
+xpack.security.transport.ssl.secure_key_passphrase: {{ elasticsearch_xpack_transport_ssl_secure_key_passphrase }}
+{% endif %}
+{% endif %}
+
+{# x-pack security enabled if end#}
+{% endif %}

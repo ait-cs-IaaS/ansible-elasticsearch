@@ -7,3 +7,37 @@ elastic_stack_version_lock: true
 
 elasticsearch_config_tpl: elasticsearch.yml.j2
 elasticsearch_config_dest: /etc/elasticsearch/elasticsearch.yml
+
+## xpack security settings
+
+elasticsearch_xpack_enabled: false
+xpack_security_users: []
+
+elasticsearch_xpack_ssl: "{{ elasticsearch_xpack_enabled }}"
+elasticsearch_xpack_ssl_cert_path: /etc/elasticsearch/certs
+elasticsearch_xpack_ssl_supported_protocols: ""
+elasticsearch_xpack_ssl_client_authentication: optional
+elasticsearch_xpack_ssl_ca: ca.crt
+elasticsearch_xpack_ssl_cert: elasticsearch.crt
+elasticsearch_xpack_ssl_key: elasticsearch.key
+elasticsearch_xpack_ssl_key_passphrase: ""
+elasticsearch_xpack_ssl_secure_key_passphrase: ""
+
+elasticsearch_xpack_http_ssl: "{{ elasticsearch_xpack_ssl }}"
+elasticsearch_xpack_http_ssl_supported_protocols: "{{ elasticsearch_xpack_ssl_supported_protocols }}"
+elasticsearch_xpack_http_ssl_client_authentication: "{{ elasticsearch_xpack_ssl_client_authentication }}"
+elasticsearch_xpack_http_ssl_ca: "{{ elasticsearch_xpack_ssl_ca }}"
+elasticsearch_xpack_http_ssl_cert: "{{ elasticsearch_xpack_ssl_cert }}"
+elasticsearch_xpack_http_ssl_key: "{{ elasticsearch_xpack_ssl_key }}"
+elasticsearch_xpack_http_ssl_key_passphrase: "{{ elasticsearch_xpack_ssl_key_passphrase }}"
+elasticsearch_xpack_http_ssl_secure_key_passphrase: "{{ elasticsearch_xpack_ssl_secure_key_passphrase }}"
+
+elasticsearch_xpack_transport_ssl: "{{ elasticsearch_xpack_ssl }}"
+elasticsearch_xpack_transport_ssl_supported_protocols: "{{ elasticsearch_xpack_ssl_supported_protocols }}"
+elasticsearch_xpack_transport_ssl_client_authentication: "{{ elasticsearch_xpack_ssl_client_authentication }}"
+elasticsearch_xpack_transport_ssl_ca: "{{ elasticsearch_xpack_ssl_ca }}"
+elasticsearch_xpack_transport_ssl_cert: "{{ elasticsearch_xpack_ssl_cert }}"
+elasticsearch_xpack_transport_ssl_key: "{{ elasticsearch_xpack_ssl_key }}"
+elasticsearch_xpack_transport_ssl_key_passphrase: "{{ elasticsearch_xpack_ssl_key_passphrase }}"
+elasticsearch_xpack_transport_ssl_secure_key_passphrase: "{{ elasticsearch_xpack_ssl_secure_key_passphrase }}"
+elasticsearch_xpack_transport_ssl_verification_mode: full
