@@ -7,13 +7,16 @@ elastic_stack_version_lock: true
 elasticsearch_config_dir: /etc/elasticsearch
 elasticsearch_config_tpl: elasticsearch.yml.j2
 elasticsearch_config_dest: "{{ elasticsearch_config_dir }}/elasticsearch.yml"
+elasticsearch_roles_tpl: roles.yml.j2
+elasticsearch_roles_dest: "{{ elasticsearch_config_dir }}/{{ elasticsearch_roles_tpl | basename | regex_replace('^(.*).j2$', '\\1') }}"
 elasticsearch_users_tpl: users.j2
 elasticsearch_users_roles_tpl: users_roles.j2
 
 ## xpack security settings
 
 elasticsearch_xpack_enabled: false
-xpack_security_users: []
+elasticsearch_xpack_users: []
+elasticsearch_xpack_roles: {}
 
 elasticsearch_xpack_ssl: "{{ elasticsearch_xpack_enabled }}"
 elasticsearch_xpack_ssl_cert_path: "{{ elasticsearch_config_dir }}/certs"
