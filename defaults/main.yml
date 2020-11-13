@@ -4,9 +4,11 @@
 ## used to fixate installed elk version
 elastic_stack_version: 7.9.3
 elastic_stack_version_lock: true
-
+elasticsearch_config_dir: /etc/elasticsearch
 elasticsearch_config_tpl: elasticsearch.yml.j2
-elasticsearch_config_dest: /etc/elasticsearch/elasticsearch.yml
+elasticsearch_config_dest: "{{ elasticsearch_config_dir }}/elasticsearch.yml"
+elasticsearch_users_tpl: users.j2
+elasticsearch_users_roles_tpl: users_roles.j2
 
 ## xpack security settings
 
@@ -14,7 +16,7 @@ elasticsearch_xpack_enabled: false
 xpack_security_users: []
 
 elasticsearch_xpack_ssl: "{{ elasticsearch_xpack_enabled }}"
-elasticsearch_xpack_ssl_cert_path: /etc/elasticsearch/certs
+elasticsearch_xpack_ssl_cert_path: "{{ elasticsearch_config_dir }}/certs"
 elasticsearch_xpack_ssl_supported_protocols: ""
 elasticsearch_xpack_ssl_client_authentication: optional
 elasticsearch_xpack_ssl_ca: ca.crt

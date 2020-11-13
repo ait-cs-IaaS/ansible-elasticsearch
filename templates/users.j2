@@ -1,0 +1,3 @@
+{% for user in xpack_security_users %}
+{{ user.username }}:{{ user.password | password_hash('bcrypt') }}
+{% endfor %}

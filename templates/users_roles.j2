@@ -1,0 +1,4 @@
+{% set xpack_security_roles =  xpack_security_users | selectattr('roles', 'defined') | map(attribute='roles') | flatten | list %}
+{% for role in xpack_security_roles %}
+{{ role }}:{{ xpack_security_users | selectattr('roles', 'defined') | selectattr('roles', 'contains', role) | map(attribute='username') | join(',') }}
+{% endfor %}
