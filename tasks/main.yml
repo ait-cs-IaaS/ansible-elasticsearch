@@ -6,11 +6,13 @@
     manager: auto
     
 - name: Unhold elasticsearch version for install
+  become: yes
   command: apt-mark unhold elasticsearch
   changed_when: false
 
 # Install elasticsearch
 - name: Install Elasticsearch
+  become: yes
   apt:
     name: elasticsearch{% if elastic_stack_version is defined and elastic_stack_version|length>0 %}={{ elastic_stack_version }}{% endif %}
     update_cache: yes
@@ -18,19 +20,84 @@
   notify: restart elasticsearch
 
 - name: Hold elasticsearch version
+  become: yes
   command: apt-mark hold elasticsearch
   when: elastic_stack_version_lock
   changed_when: false
 
+- name: Ensure certs directory exits
+  file:
+    path: "{{ elasticsearch_xpack_ssl_cert_path }}"
+    state: directory
+    mode: "02750"
+  when: (elasticsearch_xpack_http_ssl|bool and elasticsearch_xpack_http_ssl_copy_certs|bool) or
+        (elasticsearch_xpack_transport_ssl|bool and elasticsearch_xpack_transport_ssl_copy_certs|bool)
+
+- name: Copy elasticsearch HTTP ssl certificates
+  copy:
+    src: "{{ item }}"
+    dest: "{{ elasticsearch_xpack_ssl_cert_path }}/{{ item | basename }}"
+    mode: "0660"
+    owner: root
+    group: elasticsearch
+  loop:
+    - "{{ elasticsearch_xpack_http_ssl_ca }}"
+    - "{{ elasticsearch_xpack_http_ssl_cert }}"
+    - "{{ elasticsearch_xpack_http_ssl_key }}"
+  when: elasticsearch_xpack_http_ssl|bool and elasticsearch_xpack_http_ssl_copy_certs|bool
+  notify: restart elasticsearch
+
+- name: Copy elasticsearch transport ssl certificates
+  copy:
+    src: "{{ item }}"
+    dest: "{{ elasticsearch_xpack_ssl_cert_path }}/{{ item | basename }}"
+    mode: "0660"
+    owner: root
+    group: elasticsearch
+  loop:
+    - "{{ elasticsearch_xpack_transport_ssl_ca }}"
+    - "{{ elasticsearch_xpack_transport_ssl_cert }}"
+    - "{{ elasticsearch_xpack_transport_ssl_key }}"
+  when: elasticsearch_xpack_transport_ssl|bool and elasticsearch_xpack_transport_ssl_copy_certs|bool
+  notify: restart elasticsearch
+
 - name: Configure elasticsearch
+  become: yes
   template:
     src: "{{ elasticsearch_config_tpl }}"
     dest: "{{ elasticsearch_config_dest }}"
-    mode: "0644"
+    mode: "0660"
+    owner: root
+    group: elasticsearch
   notify: restart elasticsearch
+
+- name: Configure elasticsearch roles
+  become: yes
+  template:
+    src: "{{ elasticsearch_roles_tpl }}"
+    dest: "{{ elasticsearch_roles_dest }}"
+    mode: "0660"
+    owner: root
+    group: elasticsearch
+  when: elasticsearch_xpack_enabled|bool
+  notify: restart elasticsearch
+
+- name: Configure elasticsearch users
+  become: yes
+  template: 
+    src: "{{ item }}"
+    dest: "{{ elasticsearch_config_dir }}/{{ item | basename | regex_replace('^(.*).j2$', '\\1') }}"
+    mode: "0660"
+    owner: root
+    group: elasticsearch
+  loop: 
+    - "{{ elasticsearch_users_tpl }}"
+    - "{{ elasticsearch_users_roles_tpl }}"
+  when: elasticsearch_xpack_enabled|bool
 
 # Start elasticsearch
 - name: Start Elasticsearch
+  become: yes
   service:
     name: elasticsearch
     state: started

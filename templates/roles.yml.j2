@@ -1,0 +1,6 @@
+# The default roles file is empty as the preferred method of defining roles is
+# through the API/UI. File based roles are useful in error scenarios when the
+# API based roles may not be available.
+{% if elasticsearch_xpack_roles|length>0 %}
+{{ elasticsearch_xpack_roles | to_nice_yaml }}
+{% endif %}
