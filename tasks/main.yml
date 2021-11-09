@@ -1,26 +1,25 @@
-## Elasticsearch
-
+---
 # Gather rpm package facts
 - name: Gather rpm package facts
   package_facts:
     manager: auto
-    
+
 - name: Unhold elasticsearch version for install
-  become: yes
+  become: true
   command: apt-mark unhold elasticsearch
   changed_when: false
 
 # Install elasticsearch
 - name: Install Elasticsearch
-  become: yes
+  become: true
   apt:
     name: elasticsearch{% if elastic_stack_version is defined and elastic_stack_version|length>0 %}={{ elastic_stack_version }}{% endif %}
-    update_cache: yes
+    update_cache: true
   when: "'elasticsearch' not in ansible_facts.packages"
   notify: restart elasticsearch
 
 - name: Hold elasticsearch version
-  become: yes
+  become: true
   command: apt-mark hold elasticsearch
   when: elastic_stack_version_lock
   changed_when: false
@@ -62,7 +61,7 @@
   notify: restart elasticsearch
 
 - name: Configure elasticsearch
-  become: yes
+  become: true
   template:
     src: "{{ elasticsearch_config_tpl }}"
     dest: "{{ elasticsearch_config_dest }}"
@@ -72,7 +71,7 @@
   notify: restart elasticsearch
 
 - name: Configure elasticsearch roles
-  become: yes
+  become: true
   template:
     src: "{{ elasticsearch_roles_tpl }}"
     dest: "{{ elasticsearch_roles_dest }}"
@@ -83,23 +82,22 @@
   notify: restart elasticsearch
 
 - name: Configure elasticsearch users
-  become: yes
-  template: 
+  become: true
+  template:
     src: "{{ item }}"
     dest: "{{ elasticsearch_config_dir }}/{{ item | basename | regex_replace('^(.*).j2$', '\\1') }}"
     mode: "0660"
     owner: root
     group: elasticsearch
-  loop: 
+  loop:
     - "{{ elasticsearch_users_tpl }}"
     - "{{ elasticsearch_users_roles_tpl }}"
   when: elasticsearch_xpack_enabled|bool
 
 # Start elasticsearch
 - name: Start Elasticsearch
-  become: yes
+  become: true
   service:
     name: elasticsearch
     state: started
     enabled: true
-

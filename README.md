@@ -1,10 +1,10 @@
-# Ansible installation
+# Ansible Role: elasticsearch
 
-## Requirements
-- ansible
+This role installs and configures [elasticsearch](https://www.elastic.co/de/what-is/elasticsearch)
+
 ## Defaults
 
-```
+```yaml
 # default elk version
 elastic_stack_version: 7.9.3
 elastic_stack_version_lock: true
@@ -15,15 +15,14 @@ elasticsearch_config_tpl: elasticsearch.yml.j2
 elasticsearch_config_dest: /etc/elasticsearch/elasticsearch.yml
 ```
 
-
-
 ## Notes
- 
-> The _elastic_key_url_ and _elastic_repo_ can be found in the defaults folder of _elasticsearch_. 
 
-### X-Pack 
+> The _elastic_key_url_ and _elastic_repo_ can be found in the defaults folder of [elasticsearch_repo](https://github.com/ait-cs-IaaS/ansible-elasticsearch_repo).
 
-#### Default Roles
+## X-PACK
+
+### Default Roles
+
 - kibana_dashboard_only_user
 - apm_system
 - watcher_admin
@@ -53,6 +52,3 @@ elasticsearch_config_dest: /etc/elasticsearch/elasticsearch.yml
 - remote_monitoring_collector
 - superuser
 - ingest_admin
-
-
-
