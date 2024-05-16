@@ -1,39 +1,40 @@
 ---
+## Elasticsearch
+
 # Gather rpm package facts
 - name: Gather rpm package facts
-  package_facts:
+  ansible.builtin.package_facts:
     manager: auto
 
 - name: Unhold elasticsearch version for install
   become: true
-  command: apt-mark unhold elasticsearch
+  ansible.builtin.command: apt-mark unhold elasticsearch
   changed_when: false
 
 # Install elasticsearch
 - name: Install Elasticsearch
   become: true
-  apt:
-    name: elasticsearch{% if elastic_stack_version is defined and elastic_stack_version|length>0 %}={{ elastic_stack_version }}{% endif %}
+  ansible.builtin.apt:
+    name: elasticsearch{% if elastic_stack_version is defined and elastic_stack_version | length > 0 %}={{ elastic_stack_version }}{% endif %}
     update_cache: true
   when: "'elasticsearch' not in ansible_facts.packages"
-  notify: restart elasticsearch
+  notify: Restart elasticsearch
 
 - name: Hold elasticsearch version
   become: true
-  command: apt-mark hold elasticsearch
+  ansible.builtin.command: apt-mark hold elasticsearch
   when: elastic_stack_version_lock
   changed_when: false
 
 - name: Ensure certs directory exits
-  file:
+  ansible.builtin.file:
     path: "{{ elasticsearch_xpack_ssl_cert_path }}"
     state: directory
     mode: "02750"
-  when: (elasticsearch_xpack_http_ssl|bool and elasticsearch_xpack_http_ssl_copy_certs|bool) or
-        (elasticsearch_xpack_transport_ssl|bool and elasticsearch_xpack_transport_ssl_copy_certs|bool)
+  when: (elasticsearch_xpack_http_ssl|bool and elasticsearch_xpack_http_ssl_copy_certs|bool) or (elasticsearch_xpack_transport_ssl|bool and elasticsearch_xpack_transport_ssl_copy_certs|bool)
 
 - name: Copy elasticsearch HTTP ssl certificates
-  copy:
+  ansible.builtin.copy:
     src: "{{ item }}"
     dest: "{{ elasticsearch_xpack_ssl_cert_path }}/{{ item | basename }}"
     mode: "0660"
@@ -44,10 +45,10 @@
     - "{{ elasticsearch_xpack_http_ssl_cert }}"
     - "{{ elasticsearch_xpack_http_ssl_key }}"
   when: elasticsearch_xpack_http_ssl|bool and elasticsearch_xpack_http_ssl_copy_certs|bool
-  notify: restart elasticsearch
+  notify: Restart elasticsearch
 
 - name: Copy elasticsearch transport ssl certificates
-  copy:
+  ansible.builtin.copy:
     src: "{{ item }}"
     dest: "{{ elasticsearch_xpack_ssl_cert_path }}/{{ item | basename }}"
     mode: "0660"
@@ -58,32 +59,32 @@
     - "{{ elasticsearch_xpack_transport_ssl_cert }}"
     - "{{ elasticsearch_xpack_transport_ssl_key }}"
   when: elasticsearch_xpack_transport_ssl|bool and elasticsearch_xpack_transport_ssl_copy_certs|bool
-  notify: restart elasticsearch
+  notify: Restart elasticsearch
 
 - name: Configure elasticsearch
   become: true
-  template:
+  ansible.builtin.template:
     src: "{{ elasticsearch_config_tpl }}"
     dest: "{{ elasticsearch_config_dest }}"
     mode: "0660"
     owner: root
     group: elasticsearch
-  notify: restart elasticsearch
+  notify: Restart elasticsearch
 
 - name: Configure elasticsearch roles
   become: true
-  template:
+  ansible.builtin.template:
     src: "{{ elasticsearch_roles_tpl }}"
     dest: "{{ elasticsearch_roles_dest }}"
     mode: "0660"
     owner: root
     group: elasticsearch
   when: elasticsearch_xpack_enabled|bool
-  notify: restart elasticsearch
+  notify: Restart elasticsearch
 
 - name: Configure elasticsearch users
   become: true
-  template:
+  ansible.builtin.template:
     src: "{{ item }}"
     dest: "{{ elasticsearch_config_dir }}/{{ item | basename | regex_replace('^(.*).j2$', '\\1') }}"
     mode: "0660"
@@ -97,7 +98,7 @@
 # Start elasticsearch
 - name: Start Elasticsearch
   become: true
-  service:
+  ansible.builtin.service:
     name: elasticsearch
     state: started
     enabled: true

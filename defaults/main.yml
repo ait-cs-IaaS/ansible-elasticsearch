@@ -17,7 +17,6 @@ elasticsearch_users_roles_tpl: users_roles.j2
 elasticsearch_xpack_enabled: false
 elasticsearch_xpack_users: []
 elasticsearch_xpack_roles: {}
-
 elasticsearch_xpack_ssl: "{{ elasticsearch_xpack_enabled }}"
 elasticsearch_xpack_ssl_copy_certs: true
 elasticsearch_xpack_ssl_cert_path: "{{ elasticsearch_config_dir }}/certs"
